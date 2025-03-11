@@ -1,17 +1,364 @@
-<!DOCTYPE html>
-<html lang="es">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grafo Interactivo</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/react-d3-graph"></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    ></script>
+    <link href="styles.css" rel="stylesheet" />
+    <style type="text/css">
+      #mynetwork {
+        width: 600px;
+        height: 400px;
+        border: 1px solid lightgray;
+      }
+      body {
+        background-color: #ffffff;
+        color: rgb(0, 0, 0);
+        text-align: center;
+        font-family: "Courier New", Courier, monospace;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script src="script.js"></script>
+    <!-- Navbar -->
+    <ul id="menu">
+      <li>
+        <a>Licenciatura en administración 2018</a>
+      </li>
+    </ul>
+
+    <!-- Leyenda de colores 
+    <div class="legend-container">
+      <ul class="legend">
+        <li><span style="background-color: #cbe4f9"></span> Primer año</li>
+        <li><span style="background-color: #cdf5f6"></span> Segundo año</li>
+        <li><span style="background-color: #eff9da"></span> Tercer año</li>
+        <li><span style="background-color: #f9ebdf"></span> Cuarto año</li>
+        <li><span style="background-color: #f9d8d6"></span> Quinto año</li>
+      </ul>
+    </div>
+    -->
+    <div id="network"></div>
+
+    <script>
+      // Definir nodos
+      var nodes = new vis.DataSet([
+        { id: 2400, label: "Matematica 1", level: 1, estado: "cursable" },
+        { id: 2401, label: "Contab. basica", level: 1, estado: "cursable" },
+        { id: 2402, label: "Derecho pub.", level: 1, estado: "cursable" },
+        {
+          id: 2403,
+          label: "Intro. al cono. cient.",
+          level: 1,
+          estado: "cursable",
+        },
+        { id: 2404, label: "Historia eco.", level: 1, estado: "cursable" },
+        { id: 2405, label: "Adm. general", level: 1, estado: "cursable" },
+        { id: 2406, label: "Matematica 2", level: 2, estado: "noCursable" },
+        { id: 2407, label: "Estadística", level: 2, estado: "noCursable" },
+        {
+          id: 2408,
+          label: "Téc. de valuación",
+          level: 2,
+          estado: "noCursable",
+        },
+        { id: 2409, label: "Derecho civ.", level: 2, estado: "noCursable" },
+        {
+          id: 2410,
+          label: "Elementos de costos",
+          level: 3,
+          estado: "noCursable",
+        },
+        { id: 2411, label: "Eco. General", level: 2, estado: "noCursable" },
+        {
+          id: 2412,
+          label: "Psicosoc. de las org.",
+          level: 2,
+          estado: "noCursable",
+        },
+        { id: 2413, label: "Derecho Com. I", level: 3, estado: "noCursable" },
+        { id: 2414, label: "Proc. adm.", level: 3, estado: "noCursable" },
+        {
+          id: 2415,
+          label: "Sistemas de Info.",
+          level: 3,
+          estado: "noCursable",
+        },
+        { id: 2416, label: "Macroeconomía", level: 3, estado: "noCursable" },
+        {
+          id: 2417,
+          label: "Derecho Lab. y Previs.",
+          level: 3,
+          estado: "noCursable",
+        },
+        { id: 2418, label: "Estados Contab.", level: 4, estado: "noCursable" },
+        {
+          id: 2419,
+          label: "Mat. Financieras",
+          level: 4,
+          estado: "noCursable",
+        },
+        {
+          id: 2420,
+          label: "Adm. de Personal",
+          level: 4,
+          estado: "noCursable",
+        },
+        {
+          id: 2421,
+          label: "Adm. de la Prod.",
+          level: 4,
+          estado: "noCursable",
+        },
+        {
+          id: 2422,
+          label: "Comercialización",
+          level: 4,
+          estado: "noCursable",
+        },
+        {
+          id: 2423,
+          label: "Adm. de Emp. Públicas",
+          level: 5,
+          estado: "noCursable",
+        },
+        {
+          id: 2424,
+          label: "Teoría de la Decisión",
+          level: 4,
+          estado: "noCursable",
+        },
+        { id: 2425, label: "Adm. Financiera", level: 5, estado: "noCursable" },
+        { id: 2426, label: "Dirección Gral.", level: 6, estado: "noCursable" },
+        {
+          id: 2427,
+          label: "Planeam. y Eval. de Proyectos",
+          level: 6,
+          estado: "noCursable",
+        },
+        {
+          id: 2428,
+          label: "Estruct. Económica Arg.",
+          level: 5,
+          estado: "noCursable",
+        },
+        {
+          id: 2429,
+          label: "Semin. de Análisis Estrat.",
+          level: 5,
+          estado: "noCursable",
+        },
+      ]);
+
+      // Definir aristas
+      var edges = new vis.DataSet([
+        { from: 2400, to: 2407 },
+        { from: 2400, to: 2406 },
+        { from: 2400, to: 2411 },
+        { from: 2400, to: 2419 },
+        { from: 2401, to: 2408 },
+        { from: 2402, to: 2409 },
+        { from: 2402, to: 2423 },
+        { from: 2403, to: 2412 },
+        { from: 2404, to: 2411 },
+        { from: 2405, to: 2412 },
+        { from: 2405, to: 2414 },
+        { from: 2405, to: 2415 },
+        { from: 2406, to: 2416 },
+        { from: 2407, to: 2421 },
+        { from: 2407, to: 2422 },
+        { from: 2407, to: 2423 },
+        { from: 2407, to: 2424 },
+        { from: 2407, to: 2427 },
+        { from: 2408, to: 2410 },
+        { from: 2409, to: 2413 },
+        { from: 2409, to: 2417 },
+        { from: 2410, to: 2418 },
+        { from: 2410, to: 2421 },
+        { from: 2410, to: 2427 },
+        { from: 2411, to: 2416 },
+        { from: 2412, to: 2420 },
+        { from: 2413, to: 2418 },
+        { from: 2414, to: 2424 },
+        { from: 2414, to: 2429 },
+        { from: 2415, to: 2421 },
+        { from: 2415, to: 2422 },
+        { from: 2415, to: 2424 },
+        { from: 2415, to: 2425 },
+        { from: 2416, to: 2428 },
+        { from: 2417, to: 2420 },
+        { from: 2418, to: 2423 },
+        { from: 2419, to: 2425 },
+        { from: 2420, to: 2426 },
+        { from: 2420, to: 2429 },
+        { from: 2421, to: 2426 },
+        { from: 2421, to: 2429 },
+        { from: 2422, to: 2426 },
+        { from: 2422, to: 2429 },
+        { from: 2424, to: 2426 },
+        { from: 2425, to: 2426 },
+        { from: 2425, to: 2427 },
+      ]);
+
+      // Configurar la red
+      var container = document.getElementById("network");
+      var data = { nodes: nodes, edges: edges };
+      var options = {
+        nodes: { shape: "box" },
+        layout: {
+          hierarchical: {
+            enabled: true,
+            direction: "LR", // "Left to Right" (De izquierda a derecha)
+            sortMethod: "directed", // Asegura que respete la dirección de los edges
+            levelSeparation: 220, // Espaciado entre niveles (horizontal)
+            nodeSpacing: 110, // Espaciado entre nodos (vertical)
+          },
+        },
+        physics: false,
+        edges: {
+          arrows: { to: { enabled: true, scaleFactor: 0.7, type: "arrow" } },
+        },
+        animation: false,
+      };
+
+      // Crear la red
+      var network = new vis.Network(container, data, options);
+
+      // Evento de clic para cambiar el color del nodo
+      // Evento de clic para cambiar el color del nodo
+      // Evento de clic para cambiar el color del nodo
+      // Definir los colores y estados de manera centralizada
+      const colors = {
+        aprobado: {
+          background: "#7be141",
+        },
+        cursable: {
+          background: "#ffa500",
+        },
+        noCursable: {
+          background: "cbe4f9",
+        },
+        hijoCursable: {
+          background: "#ffa500",
+        },
+      };
+
+      const estados = {
+        aprobado: "aprobada",
+        cursable: "cursable",
+        noCursable: "desaprobada", // O puedes elegir otro nombre si lo prefieres
+      };
+
+      network.on("click", function (params) {
+        let nodeId = params.nodes[0];
+        if (!nodeId) return;
+
+        let node = nodes.get(nodeId);
+
+        // Si el nodo está aprobado y se hace clic en él, cambiar a cursable
+        if (node.estado === estados.aprobado) {
+          nodes.update({
+            id: nodeId,
+            estado: estados.cursable, // Cambiar el estado a "cursable"
+            color: colors.cursable, // Usar color predefinido para "cursable"
+          });
+
+          // Buscar nodos hijos
+          let connectedEdges = edges.get({
+            filter: (edge) => edge.from === nodeId,
+          });
+
+          connectedEdges.forEach((edge) => {
+            let nextNode = nodes.get(edge.to);
+
+            // Cambiar los hijos a "no cursable" cuando el nodo padre pasa a "cursable"
+            nodes.update({
+              id: edge.to,
+              estado: estados.noCursable, // "Desaprobada" o "no cursable"
+              color: colors.noCursable, // Usar color predefinido para "no cursable"
+            });
+          });
+        }
+
+        // Si el nodo está en estado "cursable" y se hace clic en él, cambiar a "aprobada"
+        else if (node.estado === estados.cursable) {
+          nodes.update({
+            id: nodeId,
+            estado: estados.aprobado,
+            color: colors.aprobado, // Usar color predefinido para "aprobado"
+          });
+
+          // Buscar nodos hijos
+          let connectedEdges = edges.get({
+            filter: (edge) => edge.from === nodeId,
+          });
+
+          connectedEdges.forEach((edge) => {
+            let nextNode = nodes.get(edge.to);
+
+            // Revisar si todos los padres del hijo están aprobados
+            let nextParents = edges.get({ filter: (e) => e.to === edge.to });
+            let allNextParentsApproved = nextParents.every(
+              (e) => nodes.get(e.from).estado === estados.aprobado
+            );
+
+            // Si todos los padres del hijo están aprobados, cambiar el hijo a "cursable"
+            if (allNextParentsApproved) {
+              nodes.update({
+                id: edge.to,
+                color: colors.hijoCursable, // Usar color predefinido para hijo "cursable"
+                estado: estados.cursable, // Cambiar el hijo a "cursable"
+              });
+            }
+          });
+        }
+
+        // Si el nodo está desaprobado, cambiar a aprobado (verde) SOLO SI el estado es "cursable"
+        else if (node.estado === estados.noCursable) {
+          // Verificar si el nodo está en estado cursable antes de aprobarlo
+          if (node.estado !== estados.cursable) return; // No cambiar a aprobado si no es cursable
+
+          // Obtener los padres del nodo actual
+          let parentEdges = edges.get({ filter: (e) => e.to === nodeId });
+          let allParentsGreen = parentEdges.every(
+            (e) => nodes.get(e.from).color === colors.aprobado.background
+          );
+
+          // Si el nodo tiene padres y ninguno es verde, no permitimos el cambio
+          if (parentEdges.length > 0 && !allParentsGreen) return;
+
+          // Cambiar el color del nodo a verde y su estado a aprobado
+          nodes.update({
+            id: nodeId,
+            estado: estados.aprobado,
+            color: colors.aprobado, // Usar color predefinido para "aprobado"
+          });
+
+          // Buscar nodos hijos
+          let connectedEdges = edges.get({
+            filter: (edge) => edge.from === nodeId,
+          });
+
+          connectedEdges.forEach((edge) => {
+            let nextNode = nodes.get(edge.to);
+
+            // Revisar si todos los padres del hijo son aprobados (verdes)
+            let nextParents = edges.get({ filter: (e) => e.to === edge.to });
+            let allParentsApproved = nextParents.every(
+              (e) => nodes.get(e.from).estado === estados.aprobado
+            );
+
+            // Si todos los padres del hijo están aprobados, cambiar el hijo a cursable
+            if (allParentsApproved) {
+              nodes.update({
+                id: edge.to,
+                color: colors.hijoCursable, // Usar color predefinido para hijo "cursable"
+                estado: estados.cursable, // Cambiar el hijo a "cursable"
+              });
+            }
+          });
+        }
+      });
+    </script>
   </body>
 </html>
