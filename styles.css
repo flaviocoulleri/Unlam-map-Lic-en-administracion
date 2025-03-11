@@ -96,12 +96,12 @@ li a {
   border-top: 16px solid #3498db;
   width: 3em;
   height: 3em;
-  -webkit-animation: spin 1s linear infinite; /* Safari */
+  -webkit-animation: spin 1s linear infinite; /*  */
   animation: spin 1s linear infinite;
   margin: 1em auto;
 }
 
-/* Safari */
+/*  */
 @-webkit-keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);

@@ -139,7 +139,7 @@
         },
       ]);
 
-      // Definir aristas
+      // aristas
       var edges = new vis.DataSet([
         { from: 2400, to: 2407 },
         { from: 2400, to: 2406 },
@@ -189,7 +189,7 @@
         { from: 2425, to: 2427 },
       ]);
 
-      // Configurar la red
+      // configura la red
       var container = document.getElementById("network");
       var data = { nodes: nodes, edges: edges };
       var options = {
@@ -197,8 +197,8 @@
         layout: {
           hierarchical: {
             enabled: true,
-            direction: "LR", // "Left to Right" (De izquierda a derecha)
-            sortMethod: "directed", // Asegura que respete la dirección de los edges
+            direction: "LR", // (De izquierda a derecha)
+            sortMethod: "directed", // respeta la dirección de las aristas
             levelSeparation: 220, // Espaciado entre niveles (horizontal)
             nodeSpacing: 110, // Espaciado entre nodos (vertical)
           },
@@ -210,13 +210,10 @@
         animation: false,
       };
 
-      // Crear la red
+      // crea la red
       var network = new vis.Network(container, data, options);
 
-      // Evento de clic para cambiar el color del nodo
-      // Evento de clic para cambiar el color del nodo
-      // Evento de clic para cambiar el color del nodo
-      // Definir los colores y estados de manera centralizada
+      //Presets colores
       const colors = {
         aprobado: {
           background: "#7be141",
@@ -235,7 +232,7 @@
       const estados = {
         aprobado: "aprobada",
         cursable: "cursable",
-        noCursable: "desaprobada", // O puedes elegir otro nombre si lo prefieres
+        noCursable: "desaprobada",
       };
 
       network.on("click", function (params) {
@@ -244,15 +241,15 @@
 
         let node = nodes.get(nodeId);
 
-        // Si el nodo está aprobado y se hace clic en él, cambiar a cursable
+        // Si el nodo esta aprobado y se hace clic, cambiar a cursable
         if (node.estado === estados.aprobado) {
           nodes.update({
             id: nodeId,
             estado: estados.cursable, // Cambiar el estado a "cursable"
-            color: colors.cursable, // Usar color predefinido para "cursable"
+            color: colors.cursable, // color preset para "cursable"
           });
 
-          // Buscar nodos hijos
+          // busca nodos hijos
           let connectedEdges = edges.get({
             filter: (edge) => edge.from === nodeId,
           });
@@ -269,7 +266,7 @@
           });
         }
 
-        // Si el nodo está en estado "cursable" y se hace clic en él, cambiar a "aprobada"
+        // Si el nodo está en estado "cursable" y se hace clic, cambiar a "aprobada"
         else if (node.estado === estados.cursable) {
           nodes.update({
             id: nodeId,
@@ -285,13 +282,13 @@
           connectedEdges.forEach((edge) => {
             let nextNode = nodes.get(edge.to);
 
-            // Revisar si todos los padres del hijo están aprobados
+            // Revisar si todos los padres del hijo estan aprobados
             let nextParents = edges.get({ filter: (e) => e.to === edge.to });
             let allNextParentsApproved = nextParents.every(
               (e) => nodes.get(e.from).estado === estados.aprobado
             );
 
-            // Si todos los padres del hijo están aprobados, cambiar el hijo a "cursable"
+            // Si todos los padres del hijo estan aprobados, cambiar el hijo a "cursable"
             if (allNextParentsApproved) {
               nodes.update({
                 id: edge.to,
@@ -302,7 +299,7 @@
           });
         }
 
-        // Si el nodo está desaprobado, cambiar a aprobado (verde) SOLO SI el estado es "cursable"
+        // Si el nodo esta desaprobado, cambiar a aprobado (verde) solo si el estado es "cursable"
         else if (node.estado === estados.noCursable) {
           // Verificar si el nodo está en estado cursable antes de aprobarlo
           if (node.estado !== estados.cursable) return; // No cambiar a aprobado si no es cursable
